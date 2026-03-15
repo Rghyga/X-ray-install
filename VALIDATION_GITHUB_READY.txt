@@ -1,0 +1,11 @@
+bash: install.sh: OK
+bash: setup.sh: OK
+bash: update.sh: OK
+bash: uninstall.sh: OK
+bash: menu/vmess.sh: OK
+bash: menu/vless.sh: OK
+bash: menu/trojan.sh: OK
+bash: menu/ssh.sh: OK
+bash: menu/backup.sh: OK
+bash: menu/system.sh: OK
+bash: menu/main.sh: OK

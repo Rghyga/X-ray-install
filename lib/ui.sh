@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+source /etc/katsu/lib/core.sh
+line(){ printf "══════════════════════════════════════════════════════\n"; }
+header(){ clear; line; printf "\033[0;36m                 KATSU PANEL FINAL\033[0m\n"; printf "\033[1;37m          PROFESSIONAL VPS MANAGEMENT PANEL\033[0m\n"; line; }
+box(){ printf "\n\033[1;37m%s\033[0m\n" "$1"; line; }
+dashboard(){ load_cfg; header; box "Service Status"; printf " Xray         : %s\n Nginx        : %s\n Cron         : %s\n Fail2ban     : %s\n" "$(service_state xray)" "$(service_state nginx)" "$(service_state cron)" "$(service_state fail2ban)"; box "System Information"; printf " OS           : %s\n" "$(grep PRETTY_NAME /etc/os-release | cut -d= -f2 | tr -d '\"')"; printf " CPU          : %s Core\n" "$(nproc)"; printf " RAM          : %s / %s MB\n" "$(free -m | awk '/Mem:/ {print $3}')" "$(free -m | awk '/Mem:/ {print $2}')"; printf " Uptime       : %s\n" "$(uptime -p | sed 's/up //')"; printf " Domain       : %s\n" "${DOMAIN:-unknown}"; printf " IP VPS       : %s\n" "$(curl -4fsSL https://ipv4.icanhazip.com 2>/dev/null || echo unknown)"; iface="$(ip route get 1.1.1.1 | awk '{print $5; exit}')"; today="$(vnstat -i "$iface" 2>/dev/null | awk '/today/ {print $(NF-1),$NF; exit}')"; month="$(vnstat -i "$iface" 2>/dev/null | awk '/month/ {print $(NF-1),$NF; exit}')"; total="$(vnstat -i "$iface" 2>/dev/null | awk '/total/ {print $(NF-1),$NF; exit}')"; box "Bandwidth Summary"; printf " Today        : %s\n This Month   : %s\n Total        : %s\n" "${today:-N/A}" "${month:-N/A}" "${total:-N/A}"; }

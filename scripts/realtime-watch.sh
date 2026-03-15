@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -euo pipefail
+while true; do /usr/local/bin/katsu-iplimit || true; source /etc/katsu/lib/core.sh; xray_sync_all || true; for f in "$USERS_DIR"/ssh/*.json; do [ -e "$f" ] || continue; user="$(jq -r .username "$f")"; limit="$(jq -r .iplimit "$f")"; status="$(jq -r .status "$f")"; [ "$status" = "active" ] || continue; cnt=$(who | awk '{print $1}' | grep -xc "$user" || true); if [ "$limit" -gt 0 ] && [ "$cnt" -gt "$limit" ]; then jq '.violations += 1 | .status="suspended"' "$f" > "$f.tmp" && mv "$f.tmp" "$f"; pkill -KILL -u "$user" >/dev/null 2>&1 || true; echo "$user | ssh | iplimit_exceeded | $cnt>$limit" >> /var/log/katsu/activity.log; fi; done; systemctl restart xray >/dev/null 2>&1 || true; sleep 15; done
