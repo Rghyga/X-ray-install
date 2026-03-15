@@ -7,10 +7,8 @@ server {
     location /trojan-ws { proxy_pass http://127.0.0.1:10002; proxy_http_version 1.1; proxy_set_header Upgrade $http_upgrade; proxy_set_header Connection "upgrade"; proxy_set_header Host $host; }
     location / { return 200 'Katsu Panel'; add_header Content-Type text/plain; }
 }
-server {
-    listen 443 ssl;
-    listen [::]:443 ssl;
-    http2 on;
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
     server_name __DOMAIN__;
     ssl_certificate __XRAY_DIR__/xray.crt;
     ssl_certificate_key __XRAY_DIR__/xray.key;
